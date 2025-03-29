@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# PuppyPorkr Deployment Script
+# Puppyporker Deployment Script
 # This script helps deploy the frontend and backend to Vercel
 
-echo "🚀 PuppyPorkr Deployment Script"
+echo "🚀 Puppyporker Deployment Script"
 echo "==============================="
 
 # Check if Vercel CLI is installed
@@ -38,5 +38,5 @@ echo "✅ Frontend deployed successfully"
 
 echo "🎉 Deployment completed successfully!"
 echo "🌐 Your application should now be available at:"
-echo "   - Frontend: https://puppyporkr.com"
-echo "   - Backend API: https://api.puppyporkr.com"
+echo "   - Frontend: https://puppyporker.com"
+echo "   - Backend API: https://api.puppyporker.com"

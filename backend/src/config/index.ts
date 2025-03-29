@@ -9,7 +9,7 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   
   // Database configuration
-  databaseUrl: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/puppyporkrdb?schema=public',
+  databaseUrl: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/puppyporkerdb?schema=public',
   
   // JWT configuration
   jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret_key_here',

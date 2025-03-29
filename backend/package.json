@@ -1,7 +1,7 @@
 {
-  "name": "puppyporkr-backend",
+  "name": "puppyporker-backend",
   "version": "1.0.0",
-  "description": "Backend for PuppyPorkr.com - a pet matchmaking platform",
+  "description": "Backend for Puppyporker.com - a pet matchmaking platform",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {

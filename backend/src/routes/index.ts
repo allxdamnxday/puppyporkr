@@ -8,7 +8,7 @@ const router = express.Router();
 // Root route
 router.get('/', (req: Request, res: Response) => {
   res.status(200).json({
-    message: 'Welcome to PuppyPorkr API',
+    message: 'Welcome to Puppyporker API',
     version: '1.0.0',
     documentation: '/api-docs'
   });
@@ -16,7 +16,7 @@ router.get('/', (req: Request, res: Response) => {
 
 // Health check route
 router.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', message: 'PuppyPorkr API is running' });
+  res.status(200).json({ status: 'ok', message: 'Puppyporker API is running' });
 });
 
 // API routes

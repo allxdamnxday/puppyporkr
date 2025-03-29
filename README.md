@@ -1,4 +1,4 @@
-# PuppyPorkr
+# Puppyporker
 
 A modern pet matchmaking platform built with React, TypeScript, Express, and Supabase.
 
@@ -30,8 +30,8 @@ A modern pet matchmaking platform built with React, TypeScript, Express, and Sup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/puppyporkr.git
-cd puppyporkr
+git clone https://github.com/yourusername/puppyporker.git
+cd puppyporker
 ```
 
 2. Install dependencies:

@@ -6,12 +6,12 @@ services:
     build:
       context: ./backend # Path to the backend Dockerfile directory
       dockerfile: Dockerfile
-    container_name: puppyporkr-backend
+    container_name: puppyporker-backend
     ports:
       - "3001:3001" # Map host port 3001 to container port 3001
     environment:
       # Database connection details (replace with actual values or use .env file)
-      DATABASE_URL: postgresql://user:password@db:5432/puppyporkrdb?schema=public
+      DATABASE_URL: postgresql://user:password@db:5432/puppyporkerdb?schema=public
       REDIS_URL: redis://redis:6379
       # Add other necessary environment variables (JWT_SECRET, etc.)
       # NODE_ENV: development # Or production
@@ -33,44 +33,44 @@ services:
       - db
       - redis
     networks:
-      - puppyporkr-network
+      - puppyporker-network
 
   # Frontend Service (React/Nginx)
   frontend:
     build:
       context: ./frontend # Path to the frontend Dockerfile directory
       dockerfile: Dockerfile
-    container_name: puppyporkr-frontend
+    container_name: puppyporker-frontend
     ports:
       - "8080:80" # Map host port 8080 to container port 80 (Nginx default)
     depends_on:
       - backend # Optional: if frontend needs backend during build or startup (unlikely with Nginx serving static files)
     networks:
-      - puppyporkr-network
+      - puppyporker-network
 
   # Database Service (PostgreSQL)
   db:
     image: postgres:15-alpine # Use PostgreSQL version 15 on Alpine Linux
-    container_name: puppyporkr-db
+    container_name: puppyporker-db
     environment:
       POSTGRES_USER: user # Replace with a secure username
       POSTGRES_PASSWORD: password # Replace with a secure password
-      POSTGRES_DB: puppyporkrdb # Database name
+      POSTGRES_DB: puppyporkerdb # Database name
     volumes:
       - postgres_data:/var/lib/postgresql/data # Persist database data
     ports:
       - "5432:5432" # Map host port 5432 to container port 5432 (optional, for external access)
     networks:
-      - puppyporkr-network
+      - puppyporker-network
 
   # Caching Service (Redis)
   redis:
     image: redis:alpine # Use Redis on Alpine Linux
-    container_name: puppyporkr-redis
+    container_name: puppyporker-redis
     ports:
       - "6379:6379" # Map host port 6379 to container port 6379 (optional, for external access)
     networks:
-      - puppyporkr-network
+      - puppyporker-network
 
 # Define named volumes
 volumes:
@@ -81,5 +81,5 @@ volumes:
 
 # Define a network for services to communicate
 networks:
-  puppyporkr-network:
+  puppyporker-network:
     driver: bridge # Use the default bridge network driver

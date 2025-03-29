@@ -10,9 +10,9 @@ const port = config.port;
 // Middleware
 app.use(cors({
   origin: [
-    'https://www.puppyporkr.com',
-    'https://puppyporkr.com',
-    'https://api.puppyporkr.com',
+    'https://www.puppyporker.com',
+    'https://puppyporker.com',
+    'https://api.puppyporker.com',
     'http://localhost:3000'
   ],
   credentials: true,
@@ -43,7 +43,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 // Start the server if not running in Vercel serverless environment
 if (process.env.VERCEL !== '1') {
   app.listen(port, () => {
-    console.log(`🚀 PuppyPorkr API server running at http://localhost:${port}`);
+    console.log(`🚀 Puppyporker API server running at http://localhost:${port}`);
     console.log(`🐶 Health check available at http://localhost:${port}/health`);
   });
 }
