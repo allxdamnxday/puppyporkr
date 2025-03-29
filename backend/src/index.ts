@@ -8,7 +8,17 @@ const app = express();
 const port = config.port;
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({
+  origin: [
+    'https://www.puppyporkr.com',
+    'https://puppyporkr.com',
+    'https://api.puppyporkr.com',
+    'http://localhost:3000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 
@@ -26,14 +36,16 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   console.error('Unhandled error:', err);
   res.status(500).json({
     success: false,
-    message: 'Internal server error',
+    message: 'Internal server error'
   });
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`🚀 PuppyPorkr API server running at http://localhost:${port}`);
-  console.log(`🐶 Health check available at http://localhost:${port}/health`);
-});
+// Start the server if not running in Vercel serverless environment
+if (process.env.VERCEL !== '1') {
+  app.listen(port, () => {
+    console.log(`🚀 PuppyPorkr API server running at http://localhost:${port}`);
+    console.log(`🐶 Health check available at http://localhost:${port}/health`);
+  });
+}
 
 export default app;

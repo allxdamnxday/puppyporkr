@@ -1,10 +1,10 @@
 # PuppyPorkr
 
-A modern pet matchmaking platform built with React, TypeScript, and Supabase.
+A modern pet matchmaking platform built with React, TypeScript, Express, and Supabase.
 
 ## Features
 
-- User authentication with Supabase
+- User authentication with JWT
 - Pet profile creation and management
 - Matchmaking system
 - Real-time updates
@@ -14,8 +14,9 @@ A modern pet matchmaking platform built with React, TypeScript, and Supabase.
 
 - Frontend: React + TypeScript + Vite
 - Styling: Tailwind CSS
-- Backend: Supabase
+- Backend: Node.js + Express + TypeScript
 - Database: PostgreSQL (via Supabase)
+- ORM: Prisma
 
 ## Getting Started
 
@@ -58,23 +59,49 @@ npm run dev
 npm run dev
 ```
 
-## Deployment
+## Development with Docker
+
+You can also use Docker to run the development environment:
+
+```bash
+# Build and start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+```
+
+## Production Deployment
 
 This project is configured for deployment on Vercel. The frontend and backend are set up as separate projects.
 
 ### Frontend Deployment
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add your environment variables in Vercel's project settings
-4. Deploy!
+The frontend is deployed to Vercel with the following configuration:
+
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Environment Variables:
+  - `VITE_API_URL`: URL of the backend API
+  - `VITE_SUPABASE_URL`: URL of your Supabase project
 
 ### Backend Deployment
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add your environment variables in Vercel's project settings
-4. Deploy!
+The backend is deployed to Vercel with the following configuration:
+
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Environment Variables:
+  - `NODE_ENV`: `production`
+  - `DATABASE_URL`: Supabase PostgreSQL connection string
+  - `JWT_SECRET`: Secret key for JWT token generation
+  - `JWT_EXPIRES_IN`: JWT token expiration time
+  - `JWT_REFRESH_SECRET`: Secret key for JWT refresh token generation
+  - `JWT_REFRESH_EXPIRES_IN`: JWT refresh token expiration time
+
+### CI/CD Pipeline
+
+The project includes a GitHub Actions workflow that automatically builds and deploys the application to Vercel when changes are pushed to the main branch.
 
 ## Contributing
 
@@ -86,4 +113,4 @@ This project is configured for deployment on Vercel. The frontend and backend ar
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
