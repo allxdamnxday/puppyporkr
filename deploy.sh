@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Puppyporker Deployment Script
-# This script helps deploy the frontend and backend to Vercel
+# This script helps deploy the monorepo to Vercel
 
 echo "🚀 Puppyporker Deployment Script"
 echo "==============================="
@@ -16,27 +16,20 @@ fi
 echo "🔑 Checking Vercel authentication..."
 vercel whoami || (echo "❌ Please login to Vercel first with: vercel login" && exit 1)
 
-# Deploy backend
-echo "🔧 Deploying backend to Vercel..."
-cd backend
+# Deploy the monorepo to Vercel
+echo "🔧 Deploying Puppyporker to Vercel..."
 vercel --prod
+
 if [ $? -ne 0 ]; then
-    echo "❌ Backend deployment failed"
+    echo "❌ Deployment failed"
     exit 1
 fi
-echo "✅ Backend deployed successfully"
 
-# Deploy frontend
-echo "🎨 Deploying frontend to Vercel..."
-cd ../frontend
-vercel --prod
-if [ $? -ne 0 ]; then
-    echo "❌ Frontend deployment failed"
-    exit 1
-fi
-echo "✅ Frontend deployed successfully"
-
-echo "🎉 Deployment completed successfully!"
+echo "✅ Deployment completed successfully!"
 echo "🌐 Your application should now be available at:"
 echo "   - Frontend: https://puppyporker.com"
-echo "   - Backend API: https://api.puppyporker.com"
+echo "   - Backend API: https://puppyporker.com/api"
+
+echo ""
+echo "📝 Note: If you want to use custom domains, you'll need to configure them in the Vercel dashboard"
+echo "   and update your DNS settings on Hostinger."

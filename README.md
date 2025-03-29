@@ -73,35 +73,51 @@ docker-compose down
 
 ## Production Deployment
 
-This project is configured for deployment on Vercel. The frontend and backend are set up as separate projects.
+This project is configured for deployment on Vercel as a monorepo, with both frontend and backend in a single deployment.
 
-### Frontend Deployment
+### Monorepo Deployment
 
-The frontend is deployed to Vercel with the following configuration:
+The project uses a root-level `vercel.json` file to configure the deployment of both frontend and backend:
 
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Environment Variables:
-  - `VITE_API_URL`: URL of the backend API
-  - `VITE_SUPABASE_URL`: URL of your Supabase project
+- The backend is deployed as a serverless function
+- The frontend is built as a static site
+- API routes are configured to route to the backend
+- Static assets and other routes are served from the frontend
 
-### Backend Deployment
+### Environment Variables
 
-The backend is deployed to Vercel with the following configuration:
+The following environment variables are used in production:
 
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Environment Variables:
-  - `NODE_ENV`: `production`
-  - `DATABASE_URL`: Supabase PostgreSQL connection string
-  - `JWT_SECRET`: Secret key for JWT token generation
-  - `JWT_EXPIRES_IN`: JWT token expiration time
-  - `JWT_REFRESH_SECRET`: Secret key for JWT refresh token generation
-  - `JWT_REFRESH_EXPIRES_IN`: JWT refresh token expiration time
+- `NODE_ENV`: `production`
+- `DATABASE_URL`: Supabase PostgreSQL connection string
+- `JWT_SECRET`: Secret key for JWT token generation
+- `JWT_EXPIRES_IN`: JWT token expiration time
+- `JWT_REFRESH_SECRET`: Secret key for JWT refresh token generation
+- `JWT_REFRESH_EXPIRES_IN`: JWT refresh token expiration time
+- `VITE_API_URL`: Set to `/api` for the frontend to access the backend API
+- `VITE_SUPABASE_URL`: URL of your Supabase project
 
-### CI/CD Pipeline
+### Deployment Process
 
-The project includes a GitHub Actions workflow that automatically builds and deploys the application to Vercel when changes are pushed to the main branch.
+You can deploy the application to Vercel using the included deployment script:
+
+```bash
+# Make the script executable (if needed)
+chmod +x deploy.sh
+
+# Run the deployment script
+./deploy.sh
+```
+
+Alternatively, you can use the GitHub Actions workflow, which will automatically deploy the application when changes are pushed to the main branch.
+
+### Custom Domain Setup
+
+To use a custom domain with your Vercel deployment:
+
+1. Add your domain in the Vercel dashboard
+2. Configure your DNS settings on your domain provider (e.g., Hostinger)
+3. Follow the instructions provided by Vercel to verify your domain
 
 ## Contributing
 
