@@ -1,0 +1,285 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for account information
+model User {
+  id                 String               @id @default(uuid())
+  email              String               @unique
+  password           String
+  firstName          String
+  lastName           String
+  profilePicture     String?
+  bio                String?
+  location           String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  isActive           Boolean              @default(true)
+  isVerified         Boolean              @default(false)
+  verificationToken  String?
+  resetPasswordToken String?
+  lastLogin          DateTime?
+  
+  // Relationships
+  pets               Pet[]
+  preferences        UserPreference?
+  porkPointsBalance  PorkPointBalance?
+  porkPointsHistory  PorkPointTransaction[]
+  sentMatches        MatchRequest[]       @relation("SentMatchRequests")
+  receivedMatches    MatchRequest[]       @relation("ReceivedMatchRequests")
+  playdates          Playdate[]
+  achievements       UserAchievement[]
+  statistics         UserStatistic?
+}
+
+// User preferences for notifications and settings
+model UserPreference {
+  id                      String   @id @default(uuid())
+  userId                  String   @unique
+  emailNotifications      Boolean  @default(true)
+  pushNotifications       Boolean  @default(true)
+  matchNotifications      Boolean  @default(true)
+  messageNotifications    Boolean  @default(true)
+  playdateNotifications   Boolean  @default(true)
+  achievementNotifications Boolean @default(true)
+  darkMode                Boolean  @default(false)
+  language                String   @default("en")
+  
+  // Relationships
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Pet model for pet profiles
+model Pet {
+  id              String          @id @default(uuid())
+  userId          String
+  name            String
+  species         PetSpecies
+  breed           String?
+  age             Int
+  size            PetSize
+  gender          PetGender
+  activityLevel   ActivityLevel
+  friendliness    Int             // Scale of 1-10
+  description     String?
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relationships
+  owner           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos          PetPhoto[]
+  compatibilityScores CompatibilityScore[]
+  sentMatches     MatchRequest[]  @relation("SentPetMatchRequests")
+  receivedMatches MatchRequest[]  @relation("ReceivedPetMatchRequests")
+  playdates       Playdate[]
+  statistics      PetStatistic?
+}
+
+// Pet photos for galleries
+model PetPhoto {
+  id        String   @id @default(uuid())
+  petId     String
+  url       String
+  caption   String?
+  isProfile Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+// Compatibility scores between pets
+model CompatibilityScore {
+  id        String   @id @default(uuid())
+  petId     String
+  otherPetId String
+  score     Int      // Scale of 1-100
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+// Match requests between pets
+model MatchRequest {
+  id            String       @id @default(uuid())
+  fromUserId    String
+  toUserId      String
+  fromPetId     String
+  toPetId       String
+  status        MatchStatus  @default(PENDING)
+  message       String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  // Relationships
+  fromUser      User         @relation("SentMatchRequests", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser        User         @relation("ReceivedMatchRequests", fields: [toUserId], references: [id], onDelete: Cascade)
+  fromPet       Pet          @relation("SentPetMatchRequests", fields: [fromPetId], references: [id], onDelete: Cascade)
+  toPet         Pet          @relation("ReceivedPetMatchRequests", fields: [toPetId], references: [id], onDelete: Cascade)
+  playdate      Playdate?
+}
+
+// Playdates between matched pets
+model Playdate {
+  id            String         @id @default(uuid())
+  matchRequestId String        @unique
+  location      String?
+  date          DateTime
+  duration      Int?           // In minutes
+  notes         String?
+  status        PlaydateStatus @default(SCHEDULED)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  // Relationships
+  matchRequest  MatchRequest   @relation(fields: [matchRequestId], references: [id], onDelete: Cascade)
+  pets          Pet[]
+  users         User[]
+}
+
+// Pork Points balance for users
+model PorkPointBalance {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Pork Points transactions
+model PorkPointTransaction {
+  id          String               @id @default(uuid())
+  userId      String
+  amount      Int
+  type        PorkPointTransactionType
+  description String?
+  referenceId String?              // For purchases, matches, etc.
+  createdAt   DateTime             @default(now())
+  
+  // Relationships
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// User statistics
+model UserStatistic {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  totalMatches      Int      @default(0)
+  successfulMatches Int      @default(0)
+  totalPlaydates    Int      @default(0)
+  completedPlaydates Int     @default(0)
+  porkPointsEarned  Int      @default(0)
+  porkPointsSpent   Int      @default(0)
+  lastActive        DateTime @default(now())
+  
+  // Relationships
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Pet statistics
+model PetStatistic {
+  id                String   @id @default(uuid())
+  petId             String   @unique
+  totalMatches      Int      @default(0)
+  successfulMatches Int      @default(0)
+  totalPlaydates    Int      @default(0)
+  completedPlaydates Int     @default(0)
+  popularity        Int      @default(0)  // Calculated score based on views, matches, etc.
+  
+  // Relationships
+  pet               Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+// Achievements
+model Achievement {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  icon        String
+  points      Int      @default(10)
+  createdAt   DateTime @default(now())
+  
+  // Relationships
+  userAchievements UserAchievement[]
+}
+
+// User achievements
+model UserAchievement {
+  id            String     @id @default(uuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime   @default(now())
+  
+  // Relationships
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, achievementId])
+}
+
+// Leaderboard (can be generated from user and pet statistics)
+
+// Enums
+enum PetSpecies {
+  DOG
+  CAT
+  OTHER
+}
+
+enum PetSize {
+  SMALL
+  MEDIUM
+  LARGE
+  XLARGE
+}
+
+enum PetGender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum ActivityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+enum PlaydateStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum PorkPointTransactionType {
+  PURCHASE
+  REWARD
+  REFERRAL
+  MATCH
+  PLAYDATE
+  ACHIEVEMENT
+  SPENT
+}

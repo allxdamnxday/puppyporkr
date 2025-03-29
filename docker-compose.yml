@@ -1,0 +1,85 @@
+version: '3.8' # Specify docker-compose version
+
+services:
+  # Backend Service (Node.js/Express/TypeScript)
+  backend:
+    build:
+      context: ./backend # Path to the backend Dockerfile directory
+      dockerfile: Dockerfile
+    container_name: puppyporkr-backend
+    ports:
+      - "3001:3001" # Map host port 3001 to container port 3001
+    environment:
+      # Database connection details (replace with actual values or use .env file)
+      DATABASE_URL: postgresql://user:password@db:5432/puppyporkrdb?schema=public
+      REDIS_URL: redis://redis:6379
+      # Add other necessary environment variables (JWT_SECRET, etc.)
+      # NODE_ENV: development # Or production
+    volumes:
+      # Mount backend code for development hot-reloading (optional, comment out for production build)
+      # - ./backend:/usr/src/app
+      # Exclude node_modules from being overwritten by the volume mount
+      # - /usr/src/app/node_modules
+      # Mount dist folder if needed, depending on build process and hot-reload strategy
+      # - /usr/src/app/dist
+      # Note: For production, you typically wouldn't mount the source code.
+      # The image build process copies the necessary code.
+      # For development, mounting allows code changes without rebuilding the image.
+      # However, this requires installing dependencies locally and potentially handling TS compilation.
+      # For simplicity in this initial setup, we'll rely on the image build.
+      # Add back volumes if you want live development reloading.
+      - backend_node_modules:/usr/src/app/node_modules # Persist node_modules
+    depends_on:
+      - db
+      - redis
+    networks:
+      - puppyporkr-network
+
+  # Frontend Service (React/Nginx)
+  frontend:
+    build:
+      context: ./frontend # Path to the frontend Dockerfile directory
+      dockerfile: Dockerfile
+    container_name: puppyporkr-frontend
+    ports:
+      - "8080:80" # Map host port 8080 to container port 80 (Nginx default)
+    depends_on:
+      - backend # Optional: if frontend needs backend during build or startup (unlikely with Nginx serving static files)
+    networks:
+      - puppyporkr-network
+
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:15-alpine # Use PostgreSQL version 15 on Alpine Linux
+    container_name: puppyporkr-db
+    environment:
+      POSTGRES_USER: user # Replace with a secure username
+      POSTGRES_PASSWORD: password # Replace with a secure password
+      POSTGRES_DB: puppyporkrdb # Database name
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432 (optional, for external access)
+    networks:
+      - puppyporkr-network
+
+  # Caching Service (Redis)
+  redis:
+    image: redis:alpine # Use Redis on Alpine Linux
+    container_name: puppyporkr-redis
+    ports:
+      - "6379:6379" # Map host port 6379 to container port 6379 (optional, for external access)
+    networks:
+      - puppyporkr-network
+
+# Define named volumes
+volumes:
+  postgres_data:
+    driver: local # Use the local driver for volume storage
+  backend_node_modules:
+    driver: local
+
+# Define a network for services to communicate
+networks:
+  puppyporkr-network:
+    driver: bridge # Use the default bridge network driver
